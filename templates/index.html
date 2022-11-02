@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% set title='homepage' %}
+{% from 'snippets/task_box.html' import task_box with context %}
+{% block content %}
+
+<h2>{{ make_icon('chart_pie') }} stats</h2>
+<h4 class="index_cat_desc">your progress at a glance</h4>
+<table class="stats">
+    <tbody>
+        <tr>
+            <td class="stats_done" style="width: {{ stats.done / stats.all * 100 }}%">done <span class="stat_num">{{ stats.done }}</span></td>
+            <td class="stats_not" style="width: {{ stats.not / stats.all * 100 }}%">not done <span class="stat_num">{{ stats.not }}</span></td>
+            <td class="stats_dead" style="width: {{ stats.dead / stats.all * 100 }}%">late <span class="stat_num">{{ stats.dead }}</span></td>
+            <td class="stats_fail" style="width: {{ stats.fail / stats.all * 100 }}%">failed <span class="stat_num">{{ stats.fail }}</span></td>
+        </tr>
+    </tbody>
+</table>
+
+{% if dead %}
+<h2>{{ make_icon('exclamation') }} dead</h2>
+<h4 class="index_cat_desc">not done, past deadline, sorted by oldest first</h4>
+<table class="tasklist"><tbody>
+{% for task in dead %}
+    {{ task_box(task) }}
+{% endfor %}
+</tbody></table>
+{% endif %}
+
+{% if soon %}
+<h2>{{ make_icon('hourglass') }} soon dead</h2>
+<h4 class="index_cat_desc">not done, deadline within 24h</h4>
+<table class="tasklist"><tbody>
+{% for task in soon %}
+    {{ task_box(task) }}
+{% endfor %}
+</tbody></table>
+{% endif %}
+
+{% if approaching %}
+<h2>{{ make_icon('clock_play') }} approaching</h2>
+<h4 class="index_cat_desc">not done, with deadlines</h4>
+<table class="tasklist"><tbody>
+{% for task in approaching %}
+    {{ task_box(task) }}
+{% endfor %}
+</tbody></table>
+{% endif %}
+
+
+<h2>{{ make_icon('feed') }} newest</h2>
+<h4 class="index_cat_desc">all, sorted by descending timestamp</h4>
+<table class="tasklist"><tbody>
+{% for task in newest %}
+    {{ task_box(task) }}
+{% endfor %}
+</tbody></table>
+
+<h2>{{ make_icon('rainbow') }} recommended</h2>
+<h4 class="index_cat_desc">tasks waiting for you, chosen by our best <abbr title="order by random()">AI</abbr> algorithms! :)</h4>
+<table class="tasklist"><tbody>
+{% for task in recomm %}
+    {{ task_box(task) }}
+{% endfor %}
+</tbody></table>
+
+<h2>{{ make_icon('flag_green') }} recent doable</h2>
+<h4 class="index_cat_desc">not done, no dependencies, sorted by descending timestamp</h4>
+<table class="tasklist"><tbody>
+{% for task in doable %}
+    {{ task_box(task) }}
+{% endfor %}
+</tbody></table>
+
+<h2>{{ make_icon('chart_organisation') }} most important</h2>
+<h4 class="index_cat_desc">not done, sorted by dependent count</h4>
+<table class="tasklist"><tbody>
+{% for task in most_deps %}
+    {{ task_box(task[0]) }}
+{% endfor %}
+</tbody></table>
+
+{% endblock content %}

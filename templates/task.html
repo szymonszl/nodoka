@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% set title=task.title+' - task' %}
+{% from 'snippets/task_box.html' import task_box with context %}
+{% block content %}
+
+<h2 class="task_title">{{ task.title }} <a href="{{ url_for('task_edit', id=task.id) }}">{{ make_icon('pencil') }}</a></h2>
+<p class="task_meta">
+    <a href="{{ url_for('task_done', id=task.id, next=request.full_path) }}">
+        {% if task.done == 1 %}
+            {{ make_icon('tick') }} done
+        {% elif task.done == 2 %}
+            {{ make_icon('cross') }} failed
+        {% else %}
+            {{ make_icon('asterisk_yellow') }} not done
+        {% endif %}
+    </a>
+    &middot; {{ make_icon('date') }}
+    <span title="{{ task.ts | datetimeprecise }}">{{ task.ts | humandelta }}</span>
+    &middot; <a href="{{ url_for('task_deadline', id=task.id) }}"> {{ make_icon('clock') }}
+        {% if task.deadline %}
+            {{ task.deadline | datetime }}  ({{ task.deadline | humandelta }})
+        {% else %}
+            no deadline
+        {% endif %}
+    </a>
+</p>
+<pre class="task_desc">{{ task.desc }}</pre><!-- todo: make this markdown -->
+
+{% if g.authlvl < 2 %}<h3>Embeds and files</h3><p>hidden in Guest Mode</p>{% else %}
+
+<h3>Embeds <a href="#TODO">{{ make_icon('add') }}</a></h3>
+{% for embed in task.embeds %}
+<div class="box">
+    <b>{{ embed.desc }}</b> ({{ embed.type }}) <a href="#TODO">{{ make_icon('pencil') }}</a><a href="#TODO">{{ make_icon('delete') }}</a><br>
+    <a href="{{ embed.data }}">{{ embed.data }}</a>
+</div>
+{% else %}
+No embeds
+{% endfor %}
+
+<h3>Files <a href="{{ url_for('task_upload', id=task.id) }}">{{ make_icon('add') }}</a></h3>
+{% for file in task.files %}
+<div class="box">
+    {{ make_icon(file.format.icon) }} <b>{{ file.desc }}</b> <a href="{{ file.url }}">{{ file.filename }}</a> ({{ file.size | filesizeformat }}) <a href="{{ url_for('file_edit', id=file.id) }}">{{ make_icon('pencil') }}</a><a href="{{ url_for('file_delete', id=file.id) }}">{{ make_icon('delete') }}</a><br>
+    <div class="file_preview">
+        {{ file.format.preview(file) }}
+    </div>
+</div>
+{% else %}
+No files
+{% endfor %}
+
+{% endif %}{# authlvl #}
+
+<h3>Dependencies <a href="{{ url_for('task_depend', id=task.id) }}">{{ make_icon('add') }}</a></h3>
+<table class="tasklist"><tbody>
+{% for dep in task.dep_parents %}
+    {{ task_box(dep) }}
+{% else %}
+    <tr><td class="ellipsed_text">(none)</td></tr>
+{% endfor %}
+</tbody></table>
+
+<h3>Dependents</h3>
+<table class="tasklist"><tbody>
+{% for dep in task.dep_children %}
+    {{ task_box(dep) }}
+{% else %}
+    <tr><td class="ellipsed_text">(none)</td></tr>
+{% endfor %}
+</tbody></table>
+{% endblock content %}

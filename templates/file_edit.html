@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% set title='edit file' %}
+{% block content %}
+<h2>editing file <i>{{ f.filename }}</i></h2>
+<form method=POST>
+    {{ generate_csrf_input() }}
+    new description: <input type="text" name="desc" value="{{ request.form['desc'] }}" placeholder="{{ f.desc }}">
+    <center><input type="submit" class="task_form_submit"></center>
+</form>
+{% endblock content %}

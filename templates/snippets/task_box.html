@@ -1,0 +1,67 @@
+{% macro link(url, passive) -%}
+{% if not passive %}<a href="{{ url }}">{% endif -%}
+{{ caller() }}
+{%- if not passive %}</a>{% endif %}
+{%- endmacro %}
+
+{# oh god #}
+{#
+    i think this one could use some documentation even, so:
+    task <= Task object from python
+    standalone <= False if you use it in a table.tasklist, if you use standalone it provides its own
+    passive <= disables links, useful (used only for) for embedded search listings
+    url_builder <= a python callable receiving the task ID that will return a URL to be put under the title, requires passive
+#}
+{% macro task_box(task, standalone=False, passive=False, url_builder=None) %}
+{% if standalone %}
+<table class="tasklist"><tbody>
+{% endif %}
+<tr>
+    <td class="tasklist_status">
+        {% call link(url_for('task_done', id=task.id, next=request.full_path), passive) %}
+        <div class="centered_icons">
+        {% if task.done == 1 %}
+            {{ make_icon('tick') }}
+        {% elif task.done == 2 %}
+            {{ make_icon('cross') }}
+        {% else %}
+            {{ make_icon('asterisk_yellow') }}
+        {% endif %}
+        </div>
+        {% endcall %}
+    </td>
+    <td class="tasklist_title"><div class="ellipsed_text">
+        {% call link(url_for('task', id=task.id), passive) %}
+        {% if url_builder is callable %}<a href="{{ url_builder(task.id) }}">{% endif %}
+        <b>{{ task.title }}</b>
+        {% if url_builder is callable %}</a>{% endif %}
+        {% endcall %}
+    </div></td>
+    <td class="tasklist_desc"><div class="ellipsed_text">
+        {{ task.desc |truncate(50) }}
+    </div></td>
+    {#
+    <td class="tasklist_deadline">
+    {% if task.deadline %}
+    {{ make_icon('clock_error') }}: {{ task.deadline }}
+    {% endif %} #}
+    </td>
+    <td class="tasklist_flags"><div class="centered_icons">
+        {{ make_icon('clock', 'flag_disabled' if not task.deadline, (task.deadline|humandelta) if task.deadline) }}
+        {{ make_icon('page_white_add', 'flag_disabled' if not task.file_count, 'Files: '~task.file_count if task.file_count) }}
+        {{ make_icon('link', 'flag_disabled' if not task.embed_count, 'Embeds: '~task.embed_count if task.embed_count) }}
+        {% if task.dep_parent_notdone_count %}
+            {{ make_icon('chart_organisation_delete', '', 'depends on '~task.dep_parent_count~' tasks, '~task.dep_parent_notdone_count~' of which not done') }}
+        {% elif task.dep_child_count %}
+            {{ make_icon('chart_organisation_add', '', 'is a dependency for '~task.dep_child_count~' tasks') }}
+        {% elif task.dep_parent_count %}
+            {{ make_icon('chart_organisation', '', 'depends on '~task.dep_parent_count~' tasks, all done') }}
+        {% else %}
+            {{ make_icon('chart_organisation', 'flag_disabled') }}
+        {% endif %}
+    </div></td>
+</tr>
+{% if standalone %}
+</tbody></table>
+{% endif %}
+{% endmacro %}

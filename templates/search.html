@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% set title='search' %}
+{% from 'snippets/task_box.html' import task_box with context %}
+{% from 'snippets/forms.html' import search_form with context %}
+{% block content %}
+<h2>{{ make_icon('magnifier') }} search</h2>
+<form method=get>
+    {{ search_form() }}
+    <input type="submit">
+</form>
+<h2>{{ make_icon('table') }} results</h2>
+<table class="tasklist"><tbody>
+    {% for task in results %}
+        {{ task_box(task) }}
+    {% else %}
+        <tr><td class="ellipsed_text">no results</td></tr>
+    {% endfor %}
+</tbody></table>
+
+<center>
+    {% if pp %}
+        <a href="{{ pp }}">&lt;&lt; page {{ query.page-1 }}</a> /
+    {% endif %}
+    page {{ query.page }}
+    {% if np %}
+        / <a href="{{ np }}"> page {{ query.page+1 }} &gt;&gt;</a>
+    {% endif %}
+</center>
+
+{% endblock content %}

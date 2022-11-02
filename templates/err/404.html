@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% set title='404 - not found' %}
+{% block content %}
+<h2>nothing to see here</h2>
+<p style="margin-top:4rem;opacity:0.5">image: <a href="https://www.pixiv.net/en/artworks/15447134">15447134</a></p>
+<img src="{{ url_for('static', filename='404.png') }}" style="position:fixed;bottom:0;right:0;max-height:80vh;max-width:80vw;">
+{% endblock content %}

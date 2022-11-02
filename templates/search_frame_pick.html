@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% set title='[frame] search' %}
+{% from 'snippets/task_box.html' import task_box with context %}
+{% block body %}
+<main>
+    <h2>{{ make_icon('cursor') }} you have picked task <i>{{ task.title }}</i></h1>
+    {{ task_box(task, standalone=True, passive=True) }}
+    <p>you can now submit the form, or <a href="{{ back }}">click here</a> to select another task</p>
+</main>
+{% endblock body %}

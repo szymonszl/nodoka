@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% set title='mark task as done' %}
+{% block content %}
+<h2>{{ task.title }}</h2>
+<p>
+    The task is currently
+    {% if task.done == 1 %}
+        {{ make_icon('tick') }} done
+    {% elif task.done == 2 %}
+        {{ make_icon('cross') }} failed
+    {% else %}
+        {{ make_icon('asterisk_yellow') }} not done
+    {% endif %}
+</p>
+<form method=POST>
+    {{ generate_csrf_input() }}
+    <input type="hidden" name="done" value="yes">
+    <input type="submit" value="Mark as DONE" class="mark_task_done">
+</form>
+<form method=POST>
+    {{ generate_csrf_input() }}
+    <input type="hidden" name="done" value="no">
+    <input type="submit" value="Mark as NOT DONE" class="mark_task_not">
+</form>
+<form method=POST>
+    {{ generate_csrf_input() }}
+    <input type="hidden" name="done" value="fail">
+    <input type="submit" value="Mark as FAILED" class="mark_task_fail">
+</form>
+{% endblock content %}

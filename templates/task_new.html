@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% set title='new task' %}
+{% from 'snippets/forms.html' import deadline_form, title_and_desc_form %}
+{% block content %}
+<form method="POST" class="task_form" enctype="multipart/form-data">
+{{ generate_csrf_input() }}
+{{ title_and_desc_form() }}
+{{ make_icon('clock_add') }} <b>Deadline</b>:
+{{ deadline_form() }}
+{{ make_icon('page_white_add') }} <b>Files</b>:<br>
+{% for i in range(3) %}
+<div class="box">
+    File {{ i }}: <input type="checkbox" class="hide_next" name="file{{ i }}_has" {{ 'checked' if request.form['file'~i~'_has'] }}>
+    <div>
+        <input type="file" name="file{{ i }}"><br>
+        Description: <input type="text" name="file{{ i }}_desc" value="{{ request.form['file'~i~'_desc'] }}">
+    </div>
+</div>
+{% endfor %}
+{{ make_icon('link') }} <b>Embeds</b>:<br>
+{% for i in range(3) %}
+<div class="box">
+    Embed {{ i }}: <input type="checkbox" class="hide_next" name="embed{{ i }}_has" {{ 'checked' if request.form['embed'~i~'_has'] }}>
+    <div>
+        URL: <input type="url" name="embed{{ i }}" placeholder="http://example.com" value="{{ request.form['embed'~i] }}"><br>
+        Description: <input type="text" name="embed{{ i }}_desc" value="{{ request.form['embed'~i~'_desc'] }}">
+    </div>
+</div>
+{% endfor %}
+<center><input type="submit" class="task_form_submit"></center>
+</form>
+{% endblock content %}

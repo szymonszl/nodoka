@@ -1,0 +1,35 @@
+CREATE TABLE IF NOT EXISTS "tasks" (
+	"id"	INTEGER NOT NULL,
+	"ts"	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	"done"	INTEGER NOT NULL DEFAULT 0,
+	"title"	TEXT NOT NULL,
+	"desc"	TEXT NOT NULL,
+	"deadline"	TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+CREATE TABLE IF NOT EXISTS "embeds" (
+	"id"	INTEGER NOT NULL,
+	"task"	INTEGER NOT NULL,
+	"type"	TEXT NOT NULL,
+	"desc"	TEXT NOT NULL,
+	"data"	TEXT NOT NULL,
+	"metadata"	TEXT NOT NULL,
+	FOREIGN KEY("task") REFERENCES tasks("id"),
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+CREATE TABLE IF NOT EXISTS "files" (
+	"id"	INTEGER NOT NULL,
+	"task"	INTEGER NOT NULL,
+	"filename"	TEXT NOT NULL,
+	"desc"	TEXT NOT NULL,
+	"data"	BLOB NOT NULL,
+	FOREIGN KEY("task") REFERENCES tasks("id"),
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+CREATE TABLE IF NOT EXISTS "dependencies" (
+	"parent"	INTEGER,
+	"child"	INTEGER,
+	FOREIGN KEY("child") REFERENCES tasks("id"),
+	FOREIGN KEY("parent") REFERENCES tasks("id"),
+	PRIMARY KEY("parent","child")
+) WITHOUT ROWID;

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% set title='filter' %}
+{% from 'snippets/task_box.html' import task_box with context %}
+{% macro s(k, v) %}{% if request.args.get(k) == v %}selected{% endif %}{% endmacro %}
+{% block content %}
+<h2>{{ make_icon('filter') }} filter</h2>
+<form method=get>
+    <table class="filter_form">
+        <tr>
+            <td>done</td>
+            <td>
+                <select name="done">
+                    <option value="_">-</option>
+                    <option value="y" {{ s('done', 'y') }}>yes</option>
+                    <option value="n" {{ s('done', 'n') }}>no</option>
+                    <option value="f" {{ s('done', 'f') }}>failed</option>
+                    <option value="d" {{ s('done', 'd') }}>doable</option>
+                </select>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>deadline</td>
+            <td>
+                <select name="dead">
+                    <option value="_">-</option>
+                    <option value="u" {{ s('dead', 'u') }}>unset</option>
+                    <option value="f" {{ s('dead', 'f') }}>future</option>
+                    <option value="p" {{ s('dead', 'p') }}>past</option>
+                    <option value="c" {{ s('dead', 'c') }}>custom</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" name="deadp" placeholder="/[&lt;&gt;=]?(?P<dateexp>.*)/" value="{{ request.args.get('deadp') or '' }}">
+            </td>
+        </tr>
+        <tr>
+            <td>files&amp;embeds</td>
+            <td>
+                <select name="fe">
+                    <option value="_">-</option>
+                    <option value="nn" {{ s('fe', 'nn') }}>none</option>
+                    <option value="yn" {{ s('fe', 'yn') }}>yes files, no embeds</option>
+                    <option value="ny" {{ s('fe', 'ny') }}>no files, yes embeds</option>
+                    <option value="yy" {{ s('fe', 'yy') }}>both</option>
+                    <option value="c" {{ s('fe', 'c') }}>custom</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" name="fep" placeholder="/[&lt;&gt;=]?\d+,[&lt;&gt;=]?\d+,/" value="{{ request.args.get('fep') or '' }}">
+            </td>
+        </tr>
+        <tr>
+            <td>deps</td>
+            <td>
+                <select name="dep">
+                    <option value="_">-</option>
+                    <option value="hap" {{ s('dep', 'hap') }}>dependent</option>
+                    <option value="hup" {{ s('dep', 'hup') }}>dependent on undone</option>
+                    <option value="hdp" {{ s('dep', 'hdp') }}>dependent on only done</option>
+                    <option value="hac" {{ s('dep', 'hac') }}>other tasks depend on</option>
+                    <option value="huc" {{ s('dep', 'huc') }}>other undone tasks depend on</option>
+                </select>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>sort</td>
+            <td>
+                <select name="sort">
+                    <option value="cd" {{ s('sort', 'cd') }}>creation, descending</option>
+                    <option value="ca" {{ s('sort', 'ca') }}>creation, ascending</option>
+                    <option value="dd" {{ s('sort', 'dd') }}>dependent count, descending</option>
+                    <option value="dc" {{ s('sort', 'dc') }}>dependency count, descending</option>
+                </select>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+    <input type="submit">
+</form>
+<h2>{{ make_icon('table') }} results</h2>
+
+<table class="tasklist"><tbody>
+{% for task in results %}
+    {{ task_box(task) }}
+{% else %}
+    <tr><td class="ellipsed_text">no results</td></tr>
+{% endfor %}
+</tbody></table>
+
+<center>
+    {% if pp %}
+        <a href="{{ pp }}">&lt;&lt; page {{ query.page-1 }}</a> /
+    {% endif %}
+    page {{ query.page }}
+    {% if np %}
+        / <a href="{{ np }}"> page {{ query.page+1 }} &gt;&gt;</a>
+    {% endif %}
+</center>
+
+{% endblock content %}

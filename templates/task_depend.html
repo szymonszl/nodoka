@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% set title='edit task' %}
+{% from 'snippets/forms.html' import title_and_desc_form %}
+{% block content %}
+<h2>adding a dependency to task <i>{{ task.title }}</i></h2>
+<form method=POST>
+    {{ generate_csrf_input() }}
+    <iframe src="{{ url_for('search_frame', framesess=framesess) }}" class="frame">
+        i might use no JS, but iframes are required
+    </iframe>
+    <center><input type="submit" class="task_form_submit"></center>
+</form>
+{% endblock content %}

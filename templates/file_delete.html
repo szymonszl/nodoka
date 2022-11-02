@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% set title='delete file' %}
+{% block content %}
+<h2>deleting file <i>{{ file.filename }}</i></h2>
+<div class="box">
+    {{ make_icon(file.format.icon) }} <b>{{ file.desc }}</b> <a href="{{ file.url }}">{{ file.filename }}</a> ({{ file.size | filesizeformat }})<br>
+    <div class="file_preview">
+        {{ file.format.preview(file) }}
+    </div>
+</div>
+<form method=POST>
+    {{ generate_csrf_input() }}
+    <div class="box delete_confirmation">
+        <b>are you <span class="threatening">SURE</span> you want to <span class="threatening">DELETE</span> this file?</b><br>
+        <input type="checkbox" class="hide_next" name="yes_i_am"> yes i am
+    </div>
+    <center><input type="submit" class="task_form_submit"></center>
+</form>
+{% endblock content %}

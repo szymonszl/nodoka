@@ -1,0 +1,40 @@
+{% macro title_and_desc_form(title=None, desc=None) %}
+<input type="text" class="task_form_title" name="title" placeholder="Title" maxlength="40" value="{{ request.form.title or title or '' }}"><br>
+<textarea class="task_form_desc" name="desc" rows="10" placeholder="Description">{{ request.form.desc or desc or '' }}</textarea><br>
+{% endmacro %}
+
+{% macro deadline_form() %}
+<div>
+    <input type="radio" name="has_deadline" value="no" id="hd_n" {{ 'checked' if request.form.has_deadline not in ('ts', 'in') }}>
+    <label for="hd_n">none</label>
+</div>
+<div>
+    <input type="radio" name="has_deadline" value="ts" id="hd_ts" class="hide_hidable" {{ 'checked' if request.form.has_deadline == 'ts' }}>
+    <label for="hd_ts">at time:</label>
+    <span class="hidable"><input name="d_ts_d" type="date" value="{{ request.form.d_ts_d }}"><input name="d_ts_t" type="time" value="{{ request.form.d_ts_t }}"></span>
+</div>
+<div>
+    <input type="radio" name="has_deadline" value="in" id="hd_in" class="hide_hidable" {{ 'checked' if request.form.has_deadline == 'in' }}>
+    <label for="hd_ts">in:</label>
+    <span class="hidable"><input type="text" name="d_in" placeholder="3d, 15min, 2y, 4w, etc..." value="{{ request.form.d_in }}"></span>
+</div>
+{% endmacro %}
+
+{% macro search_form() %}
+<div class="box search_form">
+    <div>
+        <input type="radio" name="st" value="w" id="st_w" {{ 'checked' if request.args.st != 'l' }} class="hide_hidable">
+        <label for="st_w">Word search<span class="unhidable">...</span><span class="hidable">:</span></label>
+        <input type="text" name="qw" class="hidable" value="{{ request.args.qw }}">
+    </div>
+    <div>
+        <input type="radio" name="st" value="l" id="st_l" {{ 'checked' if request.args.st == 'l' }} class="hide_hidable">
+        <label for="st_l">SELECT tasks LIKE<span class="unhidable">...</span></label>
+        <input type="text" name="ql" class="hidable" value="{{ request.args.ql }}">
+    </div>
+    <div>
+        <input type="checkbox" name="desc" id="desc" {{ 'checked' if request.args.desc == 'on' }}>
+        <label for="desc">Also search descriptions</label>
+    </div>
+</div>
+{% endmacro %}

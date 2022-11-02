@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>{% block head %}
+    <meta charset="UTF-8">
+    <title>{% if title %}{{ title }} - {% endif %}nodoka</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='icons.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('favicon') }}" type="image/png">
+{% endblock head %}</head>
+<body>{% block body %}
+    <input type="checkbox" id="display_sidebar">
+    <div class="sidebar">
+        <header>
+            {% if g.authlvl < 2 %}
+                <img src="{{ url_for('static', filename='logo_guest.png') }}">
+            {% else %}
+                <img src="{{ url_for('static', filename='logo.png') }}">
+            {% endif %}
+        </header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">{{ make_icon('house') }} homepage</a></li>
+                <li><a href="{{ url_for('task_new') }}">{{ make_icon('add') }} add new</a></li>
+                <li><a href="{{ url_for('search') }}">{{ make_icon('magnifier') }} search</a></li>
+                <li><a href="{{ url_for('filter') }}">{{ make_icon('filter') }} filter</a></li>
+                <li><a href="{{ url_for('random') }}">{{ make_icon('rainbow') }} im feeling bored</a></li>
+                <li><a href="#TODO">{{ make_icon('cog') }} settings</a></li>
+                <li><a href="{{ url_for('logout') }}">{{ make_icon('user_go') }} logout</a></li>
+            </ul>
+            <footer>
+                {{ ndk_domain }} running nodoka {{ ndk_version }}
+            </footer>
+        </nav>
+    </div>
+    <label for="display_sidebar">
+        <div class="mobile_sidebar_hide"></div>
+    </label>
+    <div class="main">
+        <div class="header">
+            <label for="display_sidebar" class="mobile_sidebar_button">
+                <h1>
+                    {{ make_icon('arrow_right') }} {{ title }}
+                </h1>
+            </label>
+            <div class="header_shadow"></div>
+        </div>
+        <main>
+            {% for message in get_flashed_messages() %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            {% block content %}
+                if you see this something went wrong
+            {% endblock content %}
+        </main>
+    </div>
+{% endblock body %}</body>
+</html>
